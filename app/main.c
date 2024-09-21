@@ -2,7 +2,7 @@
 #include <string.h>
 
 int main() {
-  
+
   while(1){
     printf("$ ");
     fflush(stdout);
@@ -12,7 +12,7 @@ int main() {
     fgets(input, 100, stdin);
 
     input[strlen(input) - 1] = '\0'; //Removes new line
-    printf("%s: command not found", input);
+    printf("%s: command not found\n", input);
   }
  
   return 0;
