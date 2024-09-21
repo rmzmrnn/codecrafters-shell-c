@@ -11,6 +11,10 @@ int main() {
     char input[100];
     fgets(input, 100, stdin);
 
+    if (strstr(input, "exit 0") != NULL) {
+      return 0;
+    }
+
     input[strlen(input) - 1] = '\0'; //Removes new line
     printf("%s: command not found\n", input);
   }
