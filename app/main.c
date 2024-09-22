@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <string.h>
+#include "commands.h"
 
 int main() {
 
@@ -11,7 +11,18 @@ int main() {
     char input[100];
     fgets(input, 100, stdin);
 
-    if(strstr(input, "echo") != NULL){
+    char *token = strtok(input, " ");
+    int cmd = cmd_linear_search(token);
+
+    if(cmd == NULL){
+      input[strlen(input) - 1] = '\0'; //Removes new line
+      printf("%s: command not found\n", input);
+    }else{
+      // Implement Array of Functions
+      // arr_cmd_functions[cmd]();
+    }
+
+    /* if(strstr(input, "echo") != NULL){
       
       printf("%s", input + 5);
 
@@ -19,12 +30,20 @@ int main() {
       
       return 0;
 
+    }else if(strstr(input, "type") != NULL){
+      
+      if(strstr(input + 5, "echo") != NULL){
+        puts("echo is a shell builtin");
+      }else if(strstr(input + 5, "exit") != NULL){
+        puts("exit is a shell builtin");
+      }
+
     }else{
       
       input[strlen(input) - 1] = '\0'; //Removes new line
       printf("%s: command not found\n", input);
       
-    }
+    } */
   }
 
 }
