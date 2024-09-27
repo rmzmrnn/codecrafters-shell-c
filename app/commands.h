@@ -1,4 +1,7 @@
 #include <string.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
 
 typedef struct{
     char *key;
@@ -6,6 +9,7 @@ typedef struct{
 } command;
 
 typedef enum {
+    ERR = -1,
     CD,
     ECHO,
     EXIT,
@@ -23,4 +27,9 @@ command commands[] = {
 
 const size_t SIZE = sizeof(commands) / sizeof(command);
 
-command* cmd_linear_search(const char* key);
+cmd_values cmd_linear_search(const char* key);
+
+void cmd_function_echo(char* token);
+void cmd_function_exit(char* token);
+void cmd_function_pwd(char* token);
+void cmd_function_type(char* token);
