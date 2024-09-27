@@ -24,29 +24,7 @@ int main() {
       case PWD:   cmd_function_pwd(token); break;
       case TYPE:  cmd_function_type(token); break;
     }
-
-    /* if(strstr(input, "echo") != NULL){
-      
-      printf("%s", input + 5);
-
-    }else if (strstr(input, "exit 0") != NULL) {
-      
-      return 0;
-
-    }else if(strstr(input, "type") != NULL){
-      
-      if(strstr(input + 5, "echo") != NULL){
-        puts("echo is a shell builtin");
-      }else if(strstr(input + 5, "exit") != NULL){
-        puts("exit is a shell builtin");
-      }
-
-    }else{
-      
-      input[strlen(input) - 1] = '\0'; //Removes new line
-      printf("%s: command not found\n", input);
-      
-    } */
+    
   }
 
   return 0;
