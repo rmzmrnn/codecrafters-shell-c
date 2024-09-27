@@ -1,5 +1,15 @@
 #include "commands.h"
 
+command commands[] = {
+    {"cd", CD},
+    {"echo", ECHO},
+    {"exit", EXIT},
+    {"pwd", PWD},
+    {"type", TYPE}
+};
+
+const size_t SIZE = sizeof(commands) / sizeof(command);
+
 cmd_values cmd_linear_search(const char* key){
     
     for (size_t i=0; i < SIZE; i++) {
@@ -24,7 +34,7 @@ void cmd_function_exit(char *token){
     if(*(token + 5) == '0')
         exit(EXIT_SUCCESS);
     else
-        puts("Invalid value - should be exit 0");
+        puts("Invalid value - should be exit 0\n");
 }
 
 void cmd_function_pwd(char* token){
@@ -36,10 +46,10 @@ void cmd_function_type(char* token){
     cmd_values val = cmd_linear_search(token + 5);
     
     if(val != ERR){
-        printf("%s is a shell builtin", token + 5);
+        printf("%s is a shell builtin\n", token + 5);
     }else{
         // if directory does not exist
-        printf("%s: not found", token + 5);
+        printf("%s: not found\n", token + 5);
 
         // if directory exists
         // display path of directory

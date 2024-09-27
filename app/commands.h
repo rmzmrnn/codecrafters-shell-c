@@ -17,16 +17,6 @@ typedef enum {
     TYPE
 } cmd_values;
 
-command commands[] = {
-    {"cd", CD},
-    {"echo", ECHO},
-    {"exit", EXIT},
-    {"pwd", PWD},
-    {"type", TYPE}
-};
-
-const size_t SIZE = sizeof(commands) / sizeof(command);
-
 cmd_values cmd_linear_search(const char* key);
 
 void cmd_function_echo(char* token);
