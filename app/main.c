@@ -22,7 +22,9 @@ int main() {
                 exit(0);
                 break;
       case CD:    puts("Not yet implemented!\n"); break;
-      case ECHO:  cmd_function_echo(token); break;
+      case ECHO:  cmd_function_echo(token);
+                  print("$ ")
+                  break;
       case EXIT:  cmd_function_exit(token); break;
       case PWD:   cmd_function_pwd(token); break;
       case TYPE:  cmd_function_type(token); break;
