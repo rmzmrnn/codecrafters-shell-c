@@ -31,9 +31,10 @@ void cmd_function_echo(char *token){
 
 void cmd_function_exit(char *token){
     
-    if(*(token + 5) == '0')
+    if(*(token + 5) == '0'){
         exit(EXIT_SUCCESS);
-    else
+        exit(0);
+    }else
         puts("Invalid value - should be exit 0\n");
 }
 
