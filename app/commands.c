@@ -26,7 +26,7 @@ cmd_values cmd_linear_search(const char* key){
 }
 
 void cmd_function_echo(char *token){
-    printf("%s", token + 5);
+    printf("%s\n", token + 5);
 }
 
 void cmd_function_exit(char *token){
