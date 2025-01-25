@@ -18,7 +18,7 @@ int main() {
 
     switch(cmd){
       case ERR: printf("%s: command not found\n", input);
-                printf("$ exit 0\n", input);
+                printf("$ ");
                 exit(0);
                 break;
       case CD:    puts("Not yet implemented!\n"); break;
