@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include "commands.h"
 
 command commands[] = {
@@ -42,17 +45,31 @@ void cmd_function_pwd(char* token){
     // Displays current working directory
 }
 
+// Function to search for a command in PATH
 void cmd_function_type(char* token){
     
-    cmd_values val = cmd_linear_search(token + 5);
+    char *path_env = getenv("PATH");
     
-    if(val != ERR){
-        printf("%s is a shell builtin\n", token + 5);
-    }else{
-        // if directory does not exist
-        printf("%s: not found\n", token + 5);
-
-        // if directory exists
-        // display path of directory
+    if (path_env == NULL){
+        printf("%s: not found\n", token);
     }
+
+    char *path_copy = strdup(path_env);
+    char *dir = strtok(path_copy, ":");
+    static char full_path[1024];
+
+    while (dir != NULL) {
+
+        snprintf(full_path, sizeof(full_path), "%s/%s", dir, token);
+
+        if (access(full_path, X_OK) == 0) {
+            free(path_copy);
+            printf("%s is %s\n", token, full_path);
+        }
+        
+        dir = strtok(NULL, ":");
+    }
+
+    free(path_copy);
+
 }
