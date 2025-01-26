@@ -46,8 +46,7 @@ void cmd_function_pwd(char* token){
 void cmd_function_type(char* token){
     cmd_values val = cmd_linear_search(token + 5);
     if(val != ERR){
-        // printf("%s is a shell builtin\n", token + 5);
-        printf("%s is a shell builtin", token + 5);
+        printf("%s is a shell builtin\n", token + 5);
     }else{
         char *env_path = getenv("PATH");
 
