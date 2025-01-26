@@ -59,27 +59,27 @@ void cmd_function_type(char* token){
 
         while (dirpath) {
 
-        DIR *directory = opendir(dirpath);
+            DIR *directory = opendir(dirpath);
 
-        if (directory == NULL) {
-            dirpath = strtok(NULL, ":");
-            continue;
-        }
-
-        struct dirent *file;
-
-        while ((file = readdir(directory))) {
-            if (strcmp(file->d_name, token + 5) == 0) {
-            printf("%s is %s/%s\n", token + 5, dirpath, file->d_name);
-            closedir(directory);
-            free(PATH);
-            return;
+            if (directory == NULL) {
+                dirpath = strtok(NULL, ":");
+                continue;
             }
 
-        }
+            struct dirent *file;
 
-        dirpath = strtok(NULL, ":");
-        closedir(directory);
+            while ((file = readdir(directory))) {
+                if (strcmp(file->d_name, token + 5) == 0) {
+                printf("%s is %s/%s\n", token + 5, dirpath, file->d_name);
+                closedir(directory);
+                free(PATH);
+                return;
+                }
+
+            }
+
+            dirpath = strtok(NULL, ":");
+            closedir(directory);
 
         }
 
