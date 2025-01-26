@@ -17,8 +17,8 @@ int main() {
     cmd_values cmd = cmd_linear_search(token);
 
     switch(cmd){
-      case ERR: printf("%s: command not found\n", input);
-                break;
+      // case ERR: printf("%s: command not found\n", input);
+      //           break;
       case CD:    puts("Not yet implemented!\n"); break;
       case ECHO:  cmd_function_echo(token); break;
       case EXIT:  cmd_function_exit(token); break;

@@ -1,4 +1,5 @@
 #include "commands.h"
+#include <stdlib.h>
 
 command commands[] = {
     {"cd", CD},
@@ -87,6 +88,10 @@ void cmd_function_type(char* token){
     }
 }
 
-void cmd_function_exe(char* token){
-    
+void cmd_function_exe(char* token){   
+    int status = system(token);
+
+    if(status != 0){
+        printf("%s: command not found\n", token);
+    }
 }
