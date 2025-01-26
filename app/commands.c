@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
 #include "commands.h"
 
 command commands[] = {
@@ -47,29 +44,40 @@ void cmd_function_pwd(char* token){
 
 // Function to search for a command in PATH
 void cmd_function_type(char* token){
-    
-    char *path_env = getenv("PATH");
-    
-    if (path_env == NULL){
-        printf("%s: not found\n", token);
-    }
+    char *env_path = getenv("PATH");
 
-    char *path_copy = strdup(path_env);
-    char *dir = strtok(path_copy, ":");
-    static char full_path[1024];
+    // char *PATH = malloc(strlen(env_path)); // strtok mutates the PATH string
+    // strcpy(PATH, env_path);
 
-    while (dir != NULL) {
+    char *PATH = strdup(env_path);
+    char *dirpath = strtok(PATH, ":");
 
-        snprintf(full_path, sizeof(full_path), "%s/%s", dir, token);
+    while (dirpath) {
 
-        if (access(full_path, X_OK) == 0) {
-            free(path_copy);
-            printf("%s is %s\n", token, full_path);
+      DIR *directory = opendir(dirpath);
+
+      if (directory == NULL) {
+        dirpath = strtok(NULL, ":");
+        continue;
+      }
+
+      struct dirent *file;
+
+      while ((file = readdir(directory))) {
+        if (strcmp(file->d_name, token + 5) == 0) {
+          printf("%s is %s/%s\n", token + 5, dirpath, file->d_name);
+          closedir(directory);
+          free(PATH);
+          return;
         }
-        
-        dir = strtok(NULL, ":");
+
+      }
+
+      dirpath = strtok(NULL, ":");
+      closedir(directory);
+
     }
 
-    free(path_copy);
-
+    free(PATH);
+    printf("%s not found\n", token + 5);
 }
