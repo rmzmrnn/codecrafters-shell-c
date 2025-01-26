@@ -86,3 +86,7 @@ void cmd_function_type(char* token){
         printf("%s not found\n", token + 5);
     }
 }
+
+void cmd_function_exe(char* token){
+    
+}

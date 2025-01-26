@@ -24,6 +24,7 @@ int main() {
       case EXIT:  cmd_function_exit(token); break;
       case PWD:   cmd_function_pwd(token); break;
       case TYPE:  cmd_function_type(token); break;
+      default:    cmd_function_exe(token); break;
     }
     
   }
