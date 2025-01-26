@@ -44,40 +44,46 @@ void cmd_function_pwd(char* token){
 
 // Function to search for a command in PATH
 void cmd_function_type(char* token){
-    char *env_path = getenv("PATH");
+    cmd_values val = cmd_linear_search(token + 5);
+    if(val != ERR){
+        // printf("%s is a shell builtin\n", token + 5);
+        printf("%s is a shell builtin", token + 5);
+    }else{
+        char *env_path = getenv("PATH");
 
-    // char *PATH = malloc(strlen(env_path)); // strtok mutates the PATH string
-    // strcpy(PATH, env_path);
+        // char *PATH = malloc(strlen(env_path)); // strtok mutates the PATH string
+        // strcpy(PATH, env_path);
 
-    char *PATH = strdup(env_path);
-    char *dirpath = strtok(PATH, ":");
+        char *PATH = strdup(env_path);
+        char *dirpath = strtok(PATH, ":");
 
-    while (dirpath) {
+        while (dirpath) {
 
-      DIR *directory = opendir(dirpath);
+        DIR *directory = opendir(dirpath);
 
-      if (directory == NULL) {
-        dirpath = strtok(NULL, ":");
-        continue;
-      }
-
-      struct dirent *file;
-
-      while ((file = readdir(directory))) {
-        if (strcmp(file->d_name, token + 5) == 0) {
-          printf("%s is %s/%s\n", token + 5, dirpath, file->d_name);
-          closedir(directory);
-          free(PATH);
-          return;
+        if (directory == NULL) {
+            dirpath = strtok(NULL, ":");
+            continue;
         }
 
-      }
+        struct dirent *file;
 
-      dirpath = strtok(NULL, ":");
-      closedir(directory);
+        while ((file = readdir(directory))) {
+            if (strcmp(file->d_name, token + 5) == 0) {
+            printf("%s is %s/%s\n", token + 5, dirpath, file->d_name);
+            closedir(directory);
+            free(PATH);
+            return;
+            }
 
+        }
+
+        dirpath = strtok(NULL, ":");
+        closedir(directory);
+
+        }
+
+        free(PATH);
+        printf("%s not found\n", token + 5);
     }
-
-    free(PATH);
-    printf("%s not found\n", token + 5);
 }
