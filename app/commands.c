@@ -89,9 +89,49 @@ void cmd_function_type(char* token){
 }
 
 void cmd_function_exe(char* token){   
-    int status = system(token);
+    // int status = system(token);
 
-    if(status != 0){
-        printf("%s: command not found\n", token);
+    // if(status != 0){
+    //     printf("%s: command not found\n", token);
+    // }
+
+    char *PATH = getenv("PATH");
+    int *path_count = calloc(1, sizeof(int));
+    path_count[0] = 0;
+
+    for (int i = 0; PATH[i]; i++) {
+        if (PATH[i] == ':')
+        path_count[0]++;
     }
+
+    path_count[0]++;
+    char **filepaths = calloc(path_count[0], sizeof(char *));
+
+    for (int i = 0; i < path_count[0]; i++)
+        filepaths[i] = calloc(SIZE, sizeof(char));
+
+    int x = 0;
+    int y = 0;
+
+    for (int i = 0; PATH[i]; i++) {
+        if (PATH[i] != ':') {
+            filepaths[x][y++] = PATH[i];
+        } else {
+            filepaths[x++][y] = '\0';
+            y = 0;
+        }
+    }
+
+    for (int i = 0; i < path_count[0]; i++) {
+        char fullpath[strlen(filepaths[i]) + strlen(token)];
+        sprintf(fullpath, "%s/%s", filepaths[i], token);
+        if (access(fullpath, X_OK) == 0) {
+            char exec[strlen(filepaths[i]) + strlen(token)];
+            sprintf(exec, "%s/%s", filepaths[i], token);
+            system(exec);
+            return;
+        }
+    }
+    
+    printf("%s: command not found\n", token);
 }
