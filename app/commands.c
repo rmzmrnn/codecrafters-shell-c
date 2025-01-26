@@ -88,7 +88,7 @@ void cmd_function_type(char* token){
     }
 }
 
-void cmd_function_exe(char* token){   
+void cmd_function_exe(char* input){   
     // int status = system(token);
 
     // if(status != 0){
@@ -123,15 +123,23 @@ void cmd_function_exe(char* token){
     }
 
     for (int i = 0; i < path_count[0]; i++) {
-        char fullpath[strlen(filepaths[i]) + strlen(token)];
-        sprintf(fullpath, "%s/%s", filepaths[i], token);
+        char *inputCopy = calloc(SIZE, sizeof(char));
+        
+        strcpy(inputCopy, input);
+
+        char *command = strtok(inputCopy, " ");
+        
+        char fullpath[strlen(filepaths[i]) + strlen(command)];
+        
+        sprintf(fullpath, "%s/%s", filepaths[i], command);
+        
         if (access(fullpath, X_OK) == 0) {
-            char exec[strlen(filepaths[i]) + strlen(token)];
-            sprintf(exec, "%s/%s", filepaths[i], token);
+            char exec[strlen(filepaths[i]) + strlen(input)];
+            sprintf(exec, "%s/%s", filepaths[i], input);
             system(exec);
             return;
         }
     }
     
-    printf("%s: command not found\n", token);
+    printf("%s: command not found\n", input);
 }
