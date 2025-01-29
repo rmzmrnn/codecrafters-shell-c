@@ -27,3 +27,4 @@ void cmd_function_exit(char* token);
 void cmd_function_pwd(char* token);
 void cmd_function_type(char* token);
 void cmd_function_exe(char* input);
+void cmd_function_cd(char* token);

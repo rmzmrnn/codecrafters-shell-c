@@ -154,3 +154,9 @@ void cmd_function_exe(char* input){
     
     printf("%s: command not found\n", input);
 }
+
+void cmd_function_cd(char* token){
+    if(chdir(token + 3) < 0){
+        printf("cd: %s: No such file or directory\n", token + 3);
+    }
+}
