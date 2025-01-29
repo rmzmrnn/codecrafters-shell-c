@@ -1,5 +1,4 @@
 #include "commands.h"
-#include <stdlib.h>
 
 command commands[] = {
     {"cd", CD},
@@ -40,7 +39,10 @@ void cmd_function_exit(char *token){
 }
 
 void cmd_function_pwd(char* token){
-    // Displays current working directory
+    char cwd[1024];
+    if(getcwd(cwd, sizeof(cwd)) != NULL){
+        printf("%s\n", cwd);
+    }
 }
 
 // Function to search for a command in PATH
