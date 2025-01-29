@@ -1,4 +1,6 @@
 #include "commands.h"
+#include <stdlib.h>
+#include <unistd.h>
 
 command commands[] = {
     {"cd", CD},
@@ -156,7 +158,12 @@ void cmd_function_exe(char* input){
 }
 
 void cmd_function_cd(char* token){
-    if(chdir(token + 3) < 0){
+    
+    char character = *(token + 3);
+
+    if(character == '~'){
+        chdir(getenv("HOME"));
+    }else if(chdir(token + 3) < 0){
         printf("cd: %s: No such file or directory\n", token + 3);
     }
 }
