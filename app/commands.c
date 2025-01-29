@@ -142,8 +142,8 @@ void cmd_function_exe(char* input){
         sprintf(fullpath, "%s/%s", filepaths[i], command);
 
         if (access(fullpath, X_OK) == 0) {
-            char exec[strlen(filepaths[i]) + strlen(input)];
-            sprintf(exec, "%s/%s", filepaths[i], input);
+            char exec[strlen(filepaths[i]) + strlen(input) + 2]; // +2 for space and null terminator
+            sprintf(exec, "%s %s", command, input + strlen(command) + 1);
             system(exec);
             return;
         }
