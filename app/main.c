@@ -17,7 +17,7 @@ int main() {
 
     switch(cmd){
       case CD:    cmd_function_cd(token); break;
-      case ECHO:  cmd_function_echo(token); break;
+      //case ECHO:  cmd_function_echo(token); break;
       case EXIT:  cmd_function_exit(token); break;
       case PWD:   cmd_function_pwd(token); break;
       case TYPE:  cmd_function_type(token); break;
