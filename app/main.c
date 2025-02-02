@@ -9,8 +9,35 @@ int main() {
     // Wait for user input
     char input[100];
     fgets(input, 100, stdin);
-
     input[strlen(input) - 1] = '\0';
+
+    if (input[0] == '\"'){
+        char *token = strtok(input, "\"");
+
+      while(token != 0){
+        token = strtok(0, "\"");
+        if(strtok(0, "\"") == 0){
+            break;
+        }
+      }
+      
+      char cat_str[100] = "cat";
+      strcat(cat_str, token);
+      strcpy(input, cat_str);
+    }else if (input[0] == '\''){
+        char *token = strtok(input, "\'");
+
+      while(token != 0){
+        token = strtok(0, "\'");
+        if(strtok(0, "\'") == 0){
+            break;
+        }
+      }
+      
+      char cat_str[100] = "cat";
+      strcat(cat_str, token);
+      strcpy(input, cat_str);
+    }
 
     char *token = strtok(input, " ");
     cmd_values cmd = cmd_linear_search(token);

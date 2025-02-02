@@ -1,6 +1,4 @@
 #include "commands.h"
-#include <stdlib.h>
-#include <unistd.h>
 
 command commands[] = {
     {"cd", CD},
