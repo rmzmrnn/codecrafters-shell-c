@@ -1,4 +1,5 @@
 #include "commands.h"
+#include "autocomplete.h"
 
 int main() {
 
@@ -7,8 +8,30 @@ int main() {
     fflush(stdout);
 
     // Wait for user input
-    char input[100];
-    fgets(input, 100, stdin);
+    char input[100] = {NULL};
+
+    struct termios term;
+    tcgetattr(STDIN_FILENO, &term);
+    term.c_lflag &= ~(ICANON);  // Disable canonical mode
+    tcsetattr(STDIN_FILENO, TCSANOW, &term);
+
+    while (read(STDIN_FILENO, input, 100) > 0){
+      if (strstr(input, "\n") != NULL) {
+        tcsetattr(STDIN_FILENO, TCSANOW, &term); // Restore original settings
+        break;
+      } else if (strstr(input, "\t") != NULL) {
+        // autocomplete starts here <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< IMPLEMENT THIS!
+        TrieNode *root = createNode();
+        autocomplete(root, input);
+        break;
+      }
+    }
+
+    // when the user just pressed the Enter key, the loop continues
+    if(input[0] == '\n'){
+      continue;
+    }
+
     input[strlen(input) - 1] = '\0';
 
     if (input[0] == '\"'){

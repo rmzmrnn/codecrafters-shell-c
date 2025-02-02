@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <dirent.h>
+#include <termios.h>
 
 
 typedef struct{
@@ -14,7 +15,7 @@ typedef struct{
 typedef enum {
     ERR = -1,
     CD,
-    ECHO,
+    // ECHO,
     EXIT,
     PWD,
     TYPE
