@@ -1,5 +1,6 @@
 #include "commands.h"
 #include "autocomplete.h"
+#include <stdio.h>
 
 int main() {
 
@@ -97,6 +98,9 @@ int main() {
       case TYPE:  cmd_function_type(token); break;
       default:    cmd_function_exe(input); break;
     }
+    
+    free(input);
+    fflush(stdout);
 
   }
 
