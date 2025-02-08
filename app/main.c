@@ -40,7 +40,6 @@ int main() {
       } else if (c == '\t') {
         input[strlen(input)] = '\0'; // Null-terminate before autocomplete
         autocomplete(root, input);
-        write(STDOUT_FILENO, " ", 1); // Print a space
       }else if(c == 127){ //Back space
         if (strlen(input) > 0){
           input[strlen(input) - 1] = '\0';

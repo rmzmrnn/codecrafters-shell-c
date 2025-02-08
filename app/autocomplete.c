@@ -1,4 +1,5 @@
 #include "autocomplete.h"
+#include <string.h>
 
 
 // Create a New Trie Node
@@ -56,5 +57,6 @@ void autocomplete(TrieNode *root, const char *prefix) {
     strcpy(buffer, prefix);
     dfs(pCrawl, buffer, strlen(buffer));
     write(STDOUT_FILENO, buffer, 5); // Print other characters normally
+    strcat(buffer, " ");
     strcat(prefix, buffer);
 }
