@@ -1,5 +1,6 @@
 #include "commands.h"
 #include "autocomplete.h"
+#include <stdlib.h>
 
 int main() {
 
@@ -12,7 +13,8 @@ int main() {
   insert(root, "type");
 
   while(1){
-    printf("$ ");
+    // printf("$ ");
+    write(STDOUT_FILENO, "$ ", 2); // Print new line
     fflush(stdout);
 
     // Wait for user input
@@ -96,7 +98,7 @@ int main() {
       case TYPE:  cmd_function_type(token); break;
       default:    cmd_function_exe(input); break;
     }
-    
+
   }
 
   return 0;
