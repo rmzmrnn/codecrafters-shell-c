@@ -1,6 +1,4 @@
 #include "autocomplete.h"
-#include <string.h>
-
 
 // Create a New Trie Node
 TrieNode *createNode() {
