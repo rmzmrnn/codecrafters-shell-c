@@ -11,4 +11,5 @@ typedef struct TrieNode {
 } TrieNode;
 
 TrieNode *createNode();
+void insert(TrieNode *root, const char *word);
 void autocomplete(TrieNode *root, const char *prefix);

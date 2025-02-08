@@ -3,6 +3,19 @@
 
 int main() {
 
+  char *cmds[] = {
+    "cd",
+    "echo",
+    "exit",
+    "pwd",
+    "type"
+  };
+
+  TrieNode *root = createNode();
+  for(char i = 0; i < (sizeof(cmds) / sizeof(cmds[0])); i++){
+    insert(root, cmds[i]);
+  }
+
   while(1){
     printf("$ ");
     fflush(stdout);
@@ -21,7 +34,6 @@ int main() {
         break;
       } else if (strstr(input, "\t") != NULL) {
         // autocomplete starts here <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< IMPLEMENT THIS!
-        TrieNode *root = createNode();
         autocomplete(root, input);
         break;
       }
