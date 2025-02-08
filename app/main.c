@@ -3,39 +3,49 @@
 
 int main() {
 
-  char *cmds[] = {
-    "cd",
-    "echo",
-    "exit",
-    "pwd",
-    "type"
-  };
-
   TrieNode *root = createNode();
-  for(char i = 0; i < (sizeof(cmds) / sizeof(cmds[0])); i++){
-    insert(root, cmds[i]);
-  }
+
+  insert(root, "cd");
+  insert(root, "echo");
+  insert(root, "exit");
+  insert(root, "pwd");
+  insert(root, "type");
 
   while(1){
     printf("$ ");
     fflush(stdout);
 
     // Wait for user input
-    char input[100] = {NULL};
+    char input[100];
+    char c;
+    memset(input, 0, sizeof(input));
 
-    struct termios term;
-    tcgetattr(STDIN_FILENO, &term);
-    term.c_lflag &= ~(ICANON);  // Disable canonical mode
-    tcsetattr(STDIN_FILENO, TCSANOW, &term);
+    struct termios orig_term;
+    tcgetattr(STDIN_FILENO, &orig_term);
+    orig_term.c_lflag &= ~(ECHO | ICANON);  // Disable echo and canonical mode
+    tcsetattr(STDIN_FILENO, TCSANOW, &orig_term);
 
-    while (read(STDIN_FILENO, input, 100) > 0){
-      if (strstr(input, "\n") != NULL) {
-        tcsetattr(STDIN_FILENO, TCSANOW, &term); // Restore original settings
+    while (read(STDIN_FILENO, &c, 1) > 0){
+      if (c == '\n') {  // Enter key pressed
+        write(STDOUT_FILENO, "\n", 1); // Print new line
+        
+        // Enable echo and canonical mode
+        tcgetattr(STDIN_FILENO, &orig_term);
+        orig_term.c_lflag |= (ECHO | ICANON);
+        tcsetattr(STDIN_FILENO, TCSANOW, &orig_term);
+        
         break;
-      } else if (strstr(input, "\t") != NULL) {
-        // autocomplete starts here <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< IMPLEMENT THIS!
+      } else if (c == '\t') {
+        input[strlen(input)] = '\0'; // Null-terminate before autocomplete
         autocomplete(root, input);
-        break;
+      }else if(c == 127){ //Back space
+        if (strlen(input) > 0){
+          input[strlen(input) - 1] = '\0';
+          write(STDOUT_FILENO, "\b \b", 3); // Move cursor back, overwrite with space, move back again
+        }
+      }else{
+        input[strlen(input)] = c;  // Store character
+        write(STDOUT_FILENO, &c, 1); // Print other characters normally
       }
     }
 
@@ -44,7 +54,7 @@ int main() {
       continue;
     }
 
-    input[strlen(input) - 1] = '\0';
+    input[strlen(input)] = '\0';
 
     if (input[0] == '\"'){
         char *token = strtok(input, "\"");

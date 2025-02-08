@@ -29,7 +29,6 @@ void insert(TrieNode *root, const char *word) {
 void dfs(TrieNode *node, char *prefix, int level) {
     if (node->isEndOfWord) {
         prefix[level] = '\0';
-        printf("%s\n", prefix);
     }
 
     for (int i = 0; i < ALPHABET_SIZE; i++) {
@@ -46,7 +45,7 @@ void autocomplete(TrieNode *root, const char *prefix) {
     while (*prefix) {
         int index = *prefix - 'a';
         if (!pCrawl->children[index]) {
-            printf("No suggestions found.\n");
+            write(STDOUT_FILENO, "\a", 1);// bell sound
             return;
         }
         pCrawl = pCrawl->children[index];
@@ -56,23 +55,6 @@ void autocomplete(TrieNode *root, const char *prefix) {
     char buffer[100];
     strcpy(buffer, prefix);
     dfs(pCrawl, buffer, strlen(buffer));
+    write(STDOUT_FILENO, buffer, 5); // Print other characters normally
+    strcat(prefix, buffer);
 }
-
-// Driver Code
-// int main() {
-//     TrieNode *root = createNode();
-
-//     // Insert Words into Trie
-//     insert(root, "cat");
-//     insert(root, "car");
-//     insert(root, "cart");
-//     insert(root, "carbon");
-//     insert(root, "dog");
-//     insert(root, "door");
-
-//     // Autocomplete for Prefix
-//     printf("Autocomplete suggestions for 'ca':\n");
-//     autocomplete(root, "ca");
-
-//     return 0;
-// }
