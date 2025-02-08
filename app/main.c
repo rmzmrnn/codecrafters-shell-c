@@ -99,8 +99,6 @@ int main() {
       default:    cmd_function_exe(input); break;
     }
     
-    free(input);
-    fflush(stdout);
 
   }
 
