@@ -1,6 +1,5 @@
 #include "commands.h"
 #include "autocomplete.h"
-#include <stdio.h>
 
 int main() {
 
@@ -14,8 +13,11 @@ int main() {
 
   while(1){
     // printf("$ ");
-    write(STDOUT_FILENO, "$ ", 2); // Print new line
+    //Get the original stdout and stderr file descriptor
+    int stdout_fd = dup(fileno(stdout));
+    int stderr_fd = dup(fileno(stderr));
     fflush(stdout);
+    write(STDOUT_FILENO, "$ ", 2); // Print new line
 
     // Wait for user input
     char input[100];
@@ -98,7 +100,15 @@ int main() {
       case TYPE:  cmd_function_type(token); break;
       default:    cmd_function_exe(input); break;
     }
-    
+
+    free(input);
+    //Bring the stdout back to the console
+    fflush(stdout);
+    fflush(stderr);
+    dup2(stdout_fd, fileno(stdout));
+    dup2(stderr_fd, fileno(stderr));
+    close(stdout_fd);
+    close(stderr_fd);
 
   }
 
