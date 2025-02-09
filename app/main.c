@@ -97,7 +97,7 @@ int main() {
       default:    cmd_function_exe(input); break;
     }
 
-    free(input);
+    // free(input);
     //Bring the stdout back to the console
     fflush(stdout);
     fflush(stderr);
