@@ -3,6 +3,8 @@
 
 int main() {
   int idx = 0;
+  int tab_presses = 0;
+  int suggested = 0;
 
   while(1){
     // printf("$ ");
@@ -33,12 +35,18 @@ int main() {
         
         break;
       } else if (c == '\t') {
-        input[strlen(input)] = '\0'; // Null-terminate before autocomplete
-
-        autocomplete(input, &idx);
-
-        write(STDOUT_FILENO, " ", 1); // Print a space
-        input[strlen(input)] = ' '; // Null-terminate before autocomplete
+        tab_presses++;
+        if (tab_presses == 1) {
+          input[strlen(input)] = '\0'; // Null-terminate before autocomplete
+          suggested = autocomplete(input, &idx);
+          write(STDOUT_FILENO, " ", 1); // Print a space
+          input[strlen(input)] = ' '; // Null-terminate before autocomplete
+          if (suggested == 1)
+            tab_presses = 0;
+        }else if (tab_presses == 2) {
+          print_entries_buffer(input);
+          tab_presses = 0;
+        }
       }else if(c == 127){ //Back space
         if (strlen(input) > 0){
           input[strlen(input) - 1] = '\0';
