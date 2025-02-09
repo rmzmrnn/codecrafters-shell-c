@@ -2,14 +2,7 @@
 #include "autocomplete.h"
 
 int main() {
-
-  TrieNode *root = createNode();
-
-  insert(root, "cd");
-  insert(root, "echo");
-  insert(root, "exit");
-  insert(root, "pwd");
-  insert(root, "type");
+  int idx = 0;
 
   while(1){
     // printf("$ ");
@@ -41,8 +34,11 @@ int main() {
         break;
       } else if (c == '\t') {
         input[strlen(input)] = '\0'; // Null-terminate before autocomplete
-        autocomplete(root, input);
+
+        autocomplete(input, &idx);
+
         write(STDOUT_FILENO, " ", 1); // Print a space
+        input[strlen(input)] = ' '; // Null-terminate before autocomplete
       }else if(c == 127){ //Back space
         if (strlen(input) > 0){
           input[strlen(input) - 1] = '\0';

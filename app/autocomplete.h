@@ -2,15 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <termios.h>
+#include <dirent.h>
 
 #define ALPHABET_SIZE 26
 
-// Trie Node Structure
-typedef struct TrieNode {
-    struct TrieNode *children[ALPHABET_SIZE];
-    int isEndOfWord;
-} TrieNode;
-
-TrieNode *createNode();
-void insert(TrieNode *root, const char *word);
-void autocomplete(TrieNode *root, const char *prefix);
+void autocomplete(char *prefix, int *idx);
