@@ -19,6 +19,9 @@ void set_suggestion_buffer(char *input) {
   char *path = getenv("PATH");
   if (!path) return;
 
+  // Free previous buffer to avoid duplicates
+  free_buffer();
+
   char *path_copy = strdup(path);
   char *token = strtok(path_copy, ":");
 
@@ -40,13 +43,22 @@ void set_suggestion_buffer(char *input) {
           if (entry->d_name[0] == '.' || strncmp(entry->d_name, input, strlen(input)) != 0)
               continue;
 
-          // Ensure capacity
-          if (entries_buffer_size >= entries_buffer_capacity) {
-              entries_buffer_capacity *= 2;
-              entries_buffer = realloc(entries_buffer, entries_buffer_capacity * sizeof(char *));
+          // **Check for duplicates before adding**
+          int duplicate = 0;
+          for (int i = 0; i < entries_buffer_size; i++) {
+              if (strcmp(entries_buffer[i], entry->d_name) == 0) {
+                  duplicate = 1;
+                  break;
+              }
           }
 
-          entries_buffer[entries_buffer_size++] = strdup(entry->d_name);
+          if (!duplicate) {
+              if (entries_buffer_size >= entries_buffer_capacity) {
+                  entries_buffer_capacity *= 2;
+                  entries_buffer = realloc(entries_buffer, entries_buffer_capacity * sizeof(char *));
+              }
+              entries_buffer[entries_buffer_size++] = strdup(entry->d_name);
+          }
       }
 
       closedir(dir);
@@ -84,9 +96,10 @@ void print_entries_buffer(char *input) {
   write(STDOUT_FILENO, "\n", 1);
 
   for (int i = 0; i < entries_buffer_size; i++) {
-      write(STDOUT_FILENO, entries_buffer[i], strlen(entries_buffer[i]));
-      write(STDOUT_FILENO, "  ", 2);  // Two spaces
-      free(entries_buffer[i]);
+    write(STDOUT_FILENO, entries_buffer[i], strlen(entries_buffer[i]));
+    if (i < entries_buffer_size - 1) {
+        write(STDOUT_FILENO, "  ", 2); // Two spaces between items
+    }
   }
 
   write(STDOUT_FILENO, "\n$ ", 3);
@@ -122,6 +135,24 @@ void sort_entries_buffer_on_size() {
 
 // Find and Print Autocomplete Suggestions
 int autocomplete(char *input, int *idx, int tab_presses) {
+  const char *commands[] = {"echo", "exit", "type"};
+  int num_of_commands = sizeof(commands) / sizeof(commands[0]);
+
+  int found = 0;
+
+  // Check for built-in command matches
+  for (int i = 0; i < num_of_commands; i++) {
+      if (strncmp(commands[i], input, strlen(input)) == 0) {
+          snprintf(input, 100, "%s ", commands[i]); // Ensure space after completion
+          *idx = strlen(input);
+          write(STDOUT_FILENO, "\r$ ", 3);
+          write(STDOUT_FILENO, input, strlen(input));
+          found = 1;
+          return 1;
+      }
+  }
+
+  // If no built-in commands match, check executables in PATH
   set_suggestion_buffer(input);
 
   if (entries_buffer_size == 0) {
@@ -131,7 +162,8 @@ int autocomplete(char *input, int *idx, int tab_presses) {
 
   if (entries_buffer_size == 1) {
       // Single match, autocomplete the input
-      strcpy(input, entries_buffer[0]);
+      // strcpy(input, entries_buffer[0]);
+      snprintf(input, 100, "%s", entries_buffer[0]); // Append a space after the completed command
       *idx = strlen(input);
       write(STDOUT_FILENO, "\r$ ", 3);
       write(STDOUT_FILENO, input, strlen(input));

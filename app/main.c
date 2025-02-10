@@ -37,6 +37,7 @@ int main() {
       } else if (c == '\t') {
         tab_presses++;
         if (autocomplete(input, &idx, tab_presses)) {
+          input[strlen(input)] = ' ';
           tab_presses = 0;
         }
       }else if(c == 127){ //Back space
