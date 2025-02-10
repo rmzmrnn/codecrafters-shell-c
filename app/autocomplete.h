@@ -8,4 +8,4 @@
 #define ALPHABET_SIZE 26
 
 void print_entries_buffer(char *input);
-int autocomplete(char *prefix, int *idx);
+int autocomplete(char *input, int *idx, int tab_presses);

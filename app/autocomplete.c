@@ -16,71 +16,44 @@ void free_buffer() {
 }
 
 void set_suggestion_buffer(char *input) {
-    char *path = getenv("PATH");
+  char *path = getenv("PATH");
+  if (!path) return;
 
-    if (path == NULL) {
-      // PATH not found  
-      return;
-    }
-  
-    char *path_copy = strdup(path);
-    char *token = strtok(path_copy, ":");
-  
-    while (token != NULL) {
+  char *path_copy = strdup(path);
+  char *token = strtok(path_copy, ":");
+
+  // Allocate initial buffer capacity
+  if (entries_buffer == NULL) {
+      entries_buffer_capacity = 10;
+      entries_buffer = malloc(entries_buffer_capacity * sizeof(char *));
+  }
+
+  while (token) {
       DIR *dir = opendir(token);
-  
-      if (dir == NULL) {
-        // Cannot open directory, move to the next token
-        token = strtok(NULL, ":");
-        continue;
-      }
-  
-      struct dirent *entry;
-  
-      while ((entry = readdir(dir)) != NULL) {
-        char *dir_file = entry->d_name;
-  
-        // Skip "." and ".." entries
-        if (strcmp(dir_file, ".") == 0 || strcmp(dir_file, "..") == 0) {
+      if (!dir) {
+          token = strtok(NULL, ":");
           continue;
-        }
-  
-        if (strncmp(dir_file, input, strlen(input)) == 0) {
-  
-          // Check for duplicates in entries_buffer
-          int duplicate = 0;
-  
-          for (int i = 0; i < entries_buffer_size; i++) {
-            if (strcmp(entries_buffer[i], dir_file) == 0) {
-              duplicate = 1;
-              break;
-            }
-          }
-  
-          if (!duplicate) {
-            // Add the entry to entries_buffer
-            entries_buffer[entries_buffer_size] = strdup(dir_file);
-  
-            if (entries_buffer[entries_buffer_size] == NULL) {
-              // Memory allocation failure
-              closedir(dir);
-              free(path_copy);
-              return;
-  
-            }
-  
-            entries_buffer_size++;
-  
-          }
-  
-        }
-  
       }
-  
+
+      struct dirent *entry;
+      while ((entry = readdir(dir)) != NULL) {
+          if (entry->d_name[0] == '.' || strncmp(entry->d_name, input, strlen(input)) != 0)
+              continue;
+
+          // Ensure capacity
+          if (entries_buffer_size >= entries_buffer_capacity) {
+              entries_buffer_capacity *= 2;
+              entries_buffer = realloc(entries_buffer, entries_buffer_capacity * sizeof(char *));
+          }
+
+          entries_buffer[entries_buffer_size++] = strdup(entry->d_name);
+      }
+
+      closedir(dir);
       token = strtok(NULL, ":");
-  
-    }
-  
+  }
+
+  free(path_copy);
 }
 
 void sort_entries_buffer() {
@@ -107,27 +80,21 @@ void sort_entries_buffer() {
 }
 
 void print_entries_buffer(char *input) {
+  sort_entries_buffer();
+  write(STDOUT_FILENO, "\n", 1);
 
-    sort_entries_buffer();
-    // printf("\n");
-    write(STDOUT_FILENO,  "\n", 3);
-  
-    for (int i = 0; i < entries_buffer_size; i++) {
-        //   printf("%s  ", entries_buffer[i]);
-        write(STDOUT_FILENO,  entries_buffer[i], 100);
-        free(entries_buffer[i]);
-    }
-  
-    entries_buffer_size = 0;
-  
-    free(entries_buffer);
-  
-    // printf("\n");
-    write(STDOUT_FILENO,  "\n", 3);
-    // printf("$ %s", input);
-    write(STDOUT_FILENO, input, 100);
-    fflush(stdout);
-  
+  for (int i = 0; i < entries_buffer_size; i++) {
+      write(STDOUT_FILENO, entries_buffer[i], strlen(entries_buffer[i]));
+      write(STDOUT_FILENO, "  ", 2);  // Two spaces
+      free(entries_buffer[i]);
+  }
+
+  write(STDOUT_FILENO, "\n$ ", 3);
+  write(STDOUT_FILENO, input, strlen(input));
+
+  free(entries_buffer);
+  entries_buffer = NULL;
+  entries_buffer_size = 0;
 }
 
 void sort_entries_buffer_on_size() {
@@ -154,109 +121,36 @@ void sort_entries_buffer_on_size() {
 }
 
 // Find and Print Autocomplete Suggestions
-int autocomplete(char *input, int *idx) {
+int autocomplete(char *input, int *idx, int tab_presses) {
+  set_suggestion_buffer(input);
 
-    const char *commands[] = {"echo", "exit", "type"};
-    int num_of_commands = sizeof(commands) / sizeof(commands[0]);
-    int found = 0;
-  
-    for (int i = 0; i < num_of_commands; i++) {
-  
-      if (strncmp(commands[i], input, strlen(input)) == 0) {
-        // strcpy(input + strlen(input), commands[i] + strlen(input));
-        strcpy(input, commands[i]);
-        
-        *idx = strlen(input);
-        
-        // printf("\r$ %s", input);
-        write(STDOUT_FILENO,  "\r$ ", 5);
-        write(STDOUT_FILENO,  input, 100);
-        fflush(stdout);
-        
-        found = 1;
-        
-        return 1;
-      }
-  
-    }
-  
-    // check executables
-    if (!found) {
+  if (entries_buffer_size == 0) {
+      write(STDOUT_FILENO, "\a", 1); // No matches, ring the bell
+      return 0;
+  }
 
-        set_suggestion_buffer(input);
-    
-        char *shortest_match = NULL;
-        int input_len = strlen(input);
-    
-        sort_entries_buffer_on_size();
-    
-        int comapre_idx = input_len;
-        char common_prefix[256]; // Adjust size as needed
-    
-        if (entries_buffer_size < 1) {
-          goto end;
-        }
-    
-        if (entries_buffer_size == 1) {
-    
-          // Only one match; complete the input
-          strcpy(input, entries_buffer[0]);
-    
-          *idx = strlen(input);
-    
-          //   printf("\r$ %s ", input);
-          strcat(input, "\r$ %s ");
-          write(STDOUT_FILENO,  input, 100);
-          fflush(stdout);
-    
-          found = 1;
-    
-          // Free entries_buffer
-          free_buffer();
-    
-          return 1;
-    
-        }
-    
-        strcpy(common_prefix, entries_buffer[0]);
-    
-        for (int i = 1; i < entries_buffer_size; i++) {
-    
-          int j = input_len; // Start comparing from the end of input
-          
-          while (common_prefix[j] && entries_buffer[i][j] && common_prefix[j] == entries_buffer[i][j]) {
-            j++;
-          }
-    
-          common_prefix[j] = '\0'; // Truncate at divergence
-    
-        }
-    
-        if (strlen(common_prefix) > input_len) {
-    
-          // Extend input to the longest common prefix
-          strcpy(input, common_prefix);
-    
-          *idx = strlen(input);
-    
-          //   printf("\r$ %s", input);
-          strcat(input, "\r$ %s ");
-          write(STDOUT_FILENO,  input, 100);
-          fflush(stdout);
-    
-          found = 1;
-    
-          // Free entries_buffer
-          free_buffer();
-    
-          return 1;
-    
-        }
-    
-    }
-end:
-    if (!found)
-        // printf("\a");
-        write(STDOUT_FILENO,  "\a", 3);
-    return 0;
+  if (entries_buffer_size == 1) {
+      // Single match, autocomplete the input
+      strcpy(input, entries_buffer[0]);
+      *idx = strlen(input);
+      write(STDOUT_FILENO, "\r$ ", 3);
+      write(STDOUT_FILENO, input, strlen(input));
+      write(STDOUT_FILENO, " ", 1);
+      free_buffer();
+      return 1;
+  }
+
+  if (tab_presses == 1) {
+      // Multiple matches, first Tab press: ring bell
+      write(STDOUT_FILENO, "\a", 1);
+      return 0;
+  }
+
+  if (tab_presses == 2) {
+      // Multiple matches, second Tab press: print suggestions
+      print_entries_buffer(input);
+      return 0;
+  }
+
+  return 0;
 }
