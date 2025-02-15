@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <termios.h>
+#include <sys/wait.h>
 
 
 typedef struct{
@@ -23,7 +24,7 @@ typedef enum {
 
 cmd_values cmd_linear_search(const char* key);
 
-void cmd_function_echo(char* token);
+// void cmd_function_echo(char* token);
 void cmd_function_exit(char* token);
 void cmd_function_pwd(char* token);
 void cmd_function_type(char* token);

@@ -25,9 +25,9 @@ cmd_values cmd_linear_search(const char* key){
     return ERR;
 }
 
-void cmd_function_echo(char *token){
-    printf("%s\n", token + 5);
-}
+// void cmd_function_echo(char *token){
+//     printf("%s\n", token + 5);
+// }
 
 void cmd_function_exit(char *token){
     
@@ -122,12 +122,6 @@ char **getPaths(char *path, int *path_count) {
 }
 
 void cmd_function_exe(char* input){   
-    // int status = system(token);
-
-    // if(status != 0){
-    //     printf("%s: command not found\n", token);
-    // }
-
     char *PATH = getenv("PATH");
     int *path_count = calloc(1, sizeof(int));
     char **filepaths = getPaths(PATH, path_count);
