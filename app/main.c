@@ -2,10 +2,9 @@
 #include "autocomplete.h"
 
 int main() {
-  int idx = 0;
-  int tab_presses = 0;
-
   while (1) {
+    int idx = 0;
+    int tab_presses = 0;
     int stdout_fd = dup(fileno(stdout));
     int stderr_fd = dup(fileno(stderr));
     fflush(stdout);
