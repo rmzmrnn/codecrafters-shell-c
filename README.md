@@ -1,2 +1,2 @@
 # codecrafters-shell-c
-This my practice project to learn making a Shell that is compatible with Linux. This project is written in C.
+This is my practice project for making a Linux-compatible Shell. This project is written in C.
