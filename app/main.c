@@ -1,3 +1,8 @@
+/*
+* Created by: rmzmrnn (https://github.com/rmzmrnn)
+* Date finished: 15/02/2025
+*/
+
 #include "commands.h"
 #include "autocomplete.h"
 
